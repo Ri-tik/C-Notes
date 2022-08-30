@@ -59,6 +59,40 @@ Console.WriteLine(b.GetType());   //System.Boolean
 
 ---------------!---------------
 
+>Implicit Typecasting
+
+int a = 1;
+char b = "A";
+Console.WriteLine($"{a+b}");  //66  
+//The character gets converted to integer i.e 1 + 65 = 66
+
+//To get the result as character 
+Console.WriteLine($"{(char)(a+b)}");  //B
+//Since 66 is character 'A'
+
+---------------!---------------
+
+> Parsing
+
+string numS1 = "1";
+string numS1 = "2.00";
+string numS1 = "3,000";
+string numS1 = "3,000.00";
+
+Console.WriteLine(int.Parse(numS1)); // 1 //string to integer
+Console.WriteLine(int.Parse(numS1, NumberStyles.Float)); // 2 // to integer by removing decimals
+Console.WriteLine(int.Parse(numS1, NumberStyles.AllowThousands)); // 3000 // allows comma i.e thousands format
+Console.WriteLine(int.Parse(numS1, NumberStyles.Float | NumberStyles.AllowThousands)); // 3000 // allows comma i.e thousands format and decimals
+
+// Similar we can use float.Parse bool.Parse, etc
+// Using only .Parse may throw an exception thus it's better to use TryParse
+
+Int32.TryParse(numS2, out outputNum);
+Console.WriteLine(outputNum); //2
+
+
+---------------!---------------
+
 >User Input
 
 Console.WriteLine("Whats Your Name");
@@ -202,6 +236,31 @@ message = (temp >=15) ? "Its Warm" : "Its Cold";   //O.P: 'Its Warm'
 
 ---------------!---------------
 
+> Switch Case
+
+int val = 50;
+
+switch (val){
+	case 50:
+		Console.WriteLine("The Val is 50");
+		break;
+	case 51:
+		Console.WriteLine("The Val is 51");
+		break;
+	case 52:
+	case 53:
+	case 54:
+		Console.WriteLine("The Val is in between 52 and 54");
+		break;
+	default:
+		Console.WriteLine("The Val is something else");
+		break;
+}
+
+// The Val is 50
+
+---------------!---------------
+
 
 > String Interpolation
 
@@ -237,6 +296,53 @@ for(int i=0; i<parking.GetLength(0);i++)  //GetLength(dimension number) 0=row,1=
 	}
 }
 
+
+---------------!---------------
+
+> Struct vs Class
+
+Struct: Structs are passed by copy, since they're value types.
+So whenever yo pass values of a Struct to function such as below,
+the original values are unchanged.
+Example:
+
+s s1
+s1.a=5;
+s1.b=false;
+
+void StructOp(s theStruct){
+	theStruct.a = 10;
+	theStruct.b = true;
+	Console.WriteLine($"{theStruct.a}, {theStruct.b}");  // 10 true
+}
+
+StructOp(s1);
+Console.WriteLine($"{s1.a}, {s1.b}"); // 5 false
+
+Output
+//10 true
+//5 false
+//The values are unchanged
+
+
+Class: Objects are passed by reference, since they're reference types.
+So the values will be changed.
+Example:
+
+void ClassOp(MyClass theClass){
+	theClass.a = 10;
+	theClass.b = true;
+	Console.WriteLine($"{theClass.a}, {theClass.b}");  // 10 true
+}
+
+MyClass c1 = new MyClass{a=5, b=false};
+ClassOp(c1);
+Console.WriteLine($"{c1.a}, {c1.b}"); // 10 true
+
+Output
+//10 true
+//10 true
+//The values are changed
 
 ---------------!---------------
 
@@ -643,6 +749,27 @@ food.Clear();  //Empties the list, removes every item from a list
 String[] foodArray = food.ToArray();  //{"Sushi","Pizza","Burger","Pizza"}
 
 
+---------------!---------------
+
+> Tuples //Tuples are mutable in C#
+
+(int a, int b) tup1 = (5,10); //tuple with specific types
+var tup2 = ("Some Text", 10.5f); //typle with combinations of different types
+
+//changing values 
+tup1.b = 20; 
+tup2.Item1 = "New String";
+
+Console.WriiteLine($"{tup1.a}, {tup1.b}"); // 5, 20
+Console.WriiteLine($"{tup2.Item1}, {tup2.Item2}"); // New String, 10.5
+
+//Function returning multiple values
+static (int, int) PlusTimes(int a, int b){
+	return (a+b, a*b);
+}
+
+(int, int) result = PlusTimes(6,12); 
+Console.WriteLine($"Sum: {result.Item1}, Product: {result.Item2}"); //Sum: 18, Product: 72
 
 ---------------!---------------
 
@@ -815,15 +942,156 @@ thread2.Start();
 
 ---------------!---------------
 
+> Interface:
+
+// We have Two Main Classes, Furniture and Vehicle
+
+class Furniture
+{
+	public string Color {get; set;}
+	public string Material {get; set;}
+	
+	public Furniture()
+	{
+		Color = "White";
+		Material = "Wood"
+	}
+	
+	public Furniture()
+	{
+		Color = "White";
+		Material = "Wood"
+	}
+}
+
+//Chair inherits property from Furniture and you can set the values from its constructor
+class Chair : Furniture
+{
+	public Chair(string color, string material)
+	{
+		this.Color = color;
+		this.Material = meterial;
+	}
+}
+
+class Vehicle
+{
+	public float Speed {get; set;}
+	public float Color {get; set;}
+	
+	public Vehicle()
+	{
+		Speed = 120f;
+		Color = "White";
+	}
+	
+	public Vehicle(float speed, string color)
+	{
+		Speed = speed;
+		Color = color;
+	}
+}
+
+//Car inherits property from Vehicle and you can set the values from its constructor
+class Car : Vehicle
+{
+	
+	public Car(float speed, string color)
+	{
+		this.Speed = speed;
+		this.Color = color;
+	}
+	
+	// OR You Can Write It As
+	public Car(float speed, string color) : base(speed, color)
+	{}
+}
+
+
+<| What if we want to destroy a chair or a car |>
+
+interface IDestroyable
+{
+	string DestructionSound {get; set;}
+	void Destroy();
+}
 
 
 
+class Furniture
+{
+	public string Color {get; set;}
+	public string Material {get; set;}
+	
+	public Furniture()
+	{
+		Color = "White";
+		Material = "Wood"
+	}
+	
+	public Furniture()
+	{
+		Color = "White";
+		Material = "Wood"
+	}
+}
 
+//Chair inherits property from Furniture and you can set the values from its constructor
+class Chair : Furniture
+{
+	public Chair(string color, string material)
+	{
+		this.Color = color;
+		this.Material = meterial;
+	}
+}
 
+class Vehicle
+{
+	public float Speed {get; set;}
+	public float Color {get; set;}
+	
+	public Vehicle()
+	{
+		Speed = 120f;
+		Color = "White";
+	}
+	
+	public Vehicle(float speed, string color)
+	{
+		Speed = speed;
+		Color = color;
+	}
+}
 
-
-
-
+//Car inherits property from Vehicle and you can set the values from its constructor
+class Car : Vehicle
+{
+	public string DestructionSound {get; set;}
+	
+	public List<IDestroyable> DestroyablesNearby;
+	
+	public Car(float speed, string color)
+	{
+		this.Speed = speed;
+		this.Color = color;
+		
+		DestructionSound = "CarExploded.mp3";
+		DestroyablesNearby = new List<IDestroyable>();
+	}
+	
+	public void Destroy()
+	{
+		Console.WriteLine("Play Destruction Sound {0}",DestructionSound);
+		Console.WriteLine("Create Fire");
+		
+		foreach(IDestroyable destroyable in DestroyablesNearby)
+		{
+			destroyable.Destroy();   //the object that will implement the IDestroyable Interface is called as destroyable in foreach loop 
+			//so we iterate throug the collection of DestroyablesNearby which is a list of IDestroyable objects and call each objects destroy method
+		}
+	}
+}
 
 
 
